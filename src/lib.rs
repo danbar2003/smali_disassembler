@@ -23,19 +23,20 @@ pub const RETURN_VOID_OP: u8 = 0xe;
 pub const RETURN_OP: u8 = 0xf;
 pub const RETURN_WIDE_OP: u8 = 0x10;
 pub const RETURN_OBJECT_OP: u8 = 0x11;
-
 pub const CONST4_OP: u8 = 0x12;
 pub const CONST16_OP: u8 = 0x13;
 pub const CONST_OP: u8 = 0x14;
 pub const CONST_HIGH16_OP: u8 = 0x15;
-
 pub const CONST_WIDE16_OP: u8 = 0x16;
 pub const CONST_WIDE32_OP: u8 = 0x17;
 pub const CONST_WIDE_OP: u8 = 0x18;
-
-// pub const CONST_: u8 = 0x12;
-// pub const CONST_HIGH16: u8 = 0x12;
-// pub const CONST_HIGH16: u8 = 0x12;
+pub const CONST_WIDE_HIGH16_OP: u8 = 0x19;
+pub const CONST_STRING_OP: u8 = 0x1a;
+pub const CONST_STRING_JUMBO_OP: u8 = 0x1b;
+pub const CONST_CLASS_OP: u8 = 0x1c;
+pub const MONITOR_ENTER_OP: u8 = 0x1d;
+pub const MONITOR_EXIT_OP: u8 = 0x1e;
+pub const CHECK_CAST_OP: u8 = 0x1f;
 
 pub struct SmaliDeocder<'a> {
     reader: DexInstructionFormatReader<'a>,
@@ -142,12 +143,72 @@ impl<'a> SmaliDeocder<'a> {
                 }
 
                 CONST4_OP => {
-                    let (dst, value) = self.reader.r_11n()?;
-                    DalvikInstruction::CONST4(dst, value)
+                    let (reg, value) = self.reader.r_11n()?;
+                    DalvikInstruction::Const4(reg, value)
                 }
 
                 CONST16_OP => {
-                    let (dst, value) = self.reader.r_21s()?;
+                    let (reg, value) = self.reader.r_21s()?;
+                    DalvikInstruction::Const16(reg, value)
+                }
+
+                CONST_OP => {
+                    let (reg, value) = self.reader.r_31i()?;
+                    DalvikInstruction::Const(reg, value)
+                }
+
+                CONST_HIGH16_OP => {
+                    let (reg, value) = self.reader.r_21h()?;
+                    DalvikInstruction::ConstHigh16(reg, value)
+                }
+
+                CONST_WIDE16_OP => {
+                    let (reg, value) = self.reader.r_21s()?;
+                    DalvikInstruction::ConstWide16(reg, value)
+                }
+
+                CONST_WIDE32_OP => {
+                    let (reg, value) = self.reader.r_31i()?;
+                    DalvikInstruction::ConstWide32(reg, value)
+                }
+
+                CONST_WIDE_OP => {
+                    let (reg, value) = self.reader.r_51()?;
+                    DalvikInstruction::ConstWide(reg, value)
+                }
+
+                CONST_WIDE_HIGH16_OP => {
+                    let (reg, value) = self.reader.r_21h()?;
+                    DalvikInstruction::ConstWideHigh16(reg, value)
+                }
+
+                CONST_STRING_OP => {
+                    let (reg, str_index) = self.reader.r_21c()?;
+                    DalvikInstruction::ConstString(reg, str_index)
+                }
+
+                CONST_STRING_JUMBO_OP => {
+                    let (reg, str_index) = self.reader.r_31c()?;
+                    DalvikInstruction::ConstStringJumbo(reg, str_index)
+                }
+
+                CONST_CLASS_OP => {
+                    let (reg, type_index) = self.reader.r_21c()?;
+                    DalvikInstruction::ConstClass(reg, type_index)
+                }
+
+                MONITOR_ENTER_OP => {
+                    let reg = self.reader.r_11x()?;
+                    DalvikInstruction::MonitorEnter(reg)
+                }
+
+                MONITOR_EXIT_OP => {
+                    let reg = self.reader.r_11x()?;
+                    DalvikInstruction::MonitorExit(reg)
+                }
+
+                CHECK_CAST_OP => {
+                    let (reg, type_index) = self.reader.r_21c()?;
                     todo!()
                 }
 
@@ -159,8 +220,14 @@ impl<'a> SmaliDeocder<'a> {
         }
     }
 
+    /// decode all instruction without instruction offsets
     fn decode_all(&mut self) -> Vec<DalvikInstruction> {
         let mut instructions = vec![];
+
+        while let Some((inst, _)) = self.decode_instruction() {
+            instructions.push(inst)
+        }
+
         instructions
     }
 }

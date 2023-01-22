@@ -47,6 +47,14 @@ impl<'a> DexInstructionFormatReader<'a> {
         Some((self.read_u8()?, self.read_u16()?))
     }
 
+    pub fn r_21s(&mut self) -> Option<(u8, u16)> {
+        self.r_22x()
+    }
+
+    pub fn r_21h(&mut self) -> Option<(u8, u16)> {
+        self.r_22x()
+    }
+
     pub fn r_21c(&mut self) -> Option<(u8, u16)> {
         self.r_22x()
     }
