@@ -162,7 +162,7 @@ impl<'a> DexInstructionFormatReader<'a> {
         ))
     }
 
-    pub fn r_51(&mut self) -> Option<(u8, u64)> {
+    pub fn r_51(&mut self) -> Result<(u8, u64)> {
         todo!()
     }
 

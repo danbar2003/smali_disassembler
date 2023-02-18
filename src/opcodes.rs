@@ -1,14 +1,12 @@
 #![allow(dead_code)]
 
-use crate::Result;
-
 /// all dalvik opcodes
 pub const NOP_OP: u8 = 0x0;
 pub const MOV_OP: u8 = 0x1;
 pub const MOV_FROM16_OP: u8 = 0x2;
 pub const MOV16_OP: u8 = 0x3;
 pub const MOV_WIDE_OP: u8 = 0x4;
-pub const MOV_WIDE_FROM16: u8 = 0x5;
+pub const MOV_WIDE_FROM16_OP: u8 = 0x5;
 pub const MOV_WIDE16_OP: u8 = 0x6;
 pub const MOV_OBJECT_OP: u8 = 0x7;
 pub const MOV_OBJECT_FROM16_OP: u8 = 0x8;
@@ -45,10 +43,7 @@ pub enum DexBytecode {
     Move16(MoveKind, u16, u16),
     MoveResult(MoveKind, u8),
 
-    ReturnVoid,
-    Return(u8),
-    ReturnWide(u8),
-    ReturnObject(u8),
+    Return(ReturnKind, u8),
 
     Const4(u8, u8),
     Const16(u8, u16),
@@ -69,7 +64,7 @@ pub enum DexBytecode {
 #[derive(Debug)]
 pub enum MoveKind {
     Move,
-    MoveWide,
+    MovWide,
     MoveObject,
     Exception,
 }
@@ -77,6 +72,32 @@ pub enum MoveKind {
 impl MoveKind {
     pub fn from_opcode(op: u8) -> Self {
         match op {
+            MOV_OP | MOV_FROM16_OP | MOV16_OP | MOV_RESULT_OP => Self::Move,
+            MOV_WIDE_OP | MOV_WIDE_FROM16_OP | MOV_WIDE16_OP | MOV_RESULT_WIDE_OP => Self::MovWide,
+            MOV_OBJECT_OP | MOV_OBJECT_FROM16_OP | MOV_OBJECT16_OP | MOV_RESULT_OBJECT_OP => {
+                Self::MoveObject
+            }
+            MOV_EXCEPTION_OP => Self::Exception,
+            _ => unreachable!(),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum ReturnKind {
+    Return,
+    ReturnWide,
+    ReturnObject,
+    ReturnVoid,
+}
+
+impl ReturnKind {
+    pub fn from_opcode(op: u8) -> Self {
+        match op {
+            RETURN_VOID_OP => Self::ReturnVoid,
+            RETURN_OP => Self::Return,
+            RETURN_WIDE_OP => Self::ReturnWide,
+            RETURN_OBJECT_OP => Self::ReturnObject,
             _ => unreachable!(),
         }
     }
