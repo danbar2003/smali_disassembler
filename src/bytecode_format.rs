@@ -1,8 +1,8 @@
-use crate::{Error, Result};
+use crate::{errors::Error, Result};
+use std::io::{Cursor, Read};
 
 pub struct DexInstructionFormatReader<'a> {
-    stream: &'a [u8],
-    cursor: usize,
+    cursor: Cursor<&'a [u8]>,
 }
 
 const LOW_NIBBLE: u8 = 0x0f;
@@ -11,17 +11,19 @@ const HIGH_NIBBLE: u8 = 0xf0;
 #[allow(dead_code)]
 impl<'a> DexInstructionFormatReader<'a> {
     pub fn new(stream: &'a [u8]) -> Self {
-        Self { stream, cursor: 0 }
+        Self {
+            cursor: Cursor::new(&stream),
+        }
     }
 
     pub fn reset(&mut self) {
-        self.cursor = 0;
+        self.cursor.set_position(0);
     }
 
     pub fn read_byte(&mut self) -> Result<(u8, usize)> {
-        let cursor = self.cursor;
+        let position = self.cursor.position();
         let value = self.read_u8()?;
-        Ok((value, cursor))
+        Ok((value, position as usize))
     }
 
     pub fn r_12x(&mut self) -> Result<(u8, u8)> {
@@ -167,20 +169,11 @@ impl<'a> DexInstructionFormatReader<'a> {
     }
 
     fn read_u8(&mut self) -> Result<u8> {
-        if self.cursor >= self.stream.len() {
-            Err(Error::MalFormed(String::from(
-                "expected to have more bytes",
-            )))
-        } else {
-            let result = self.stream[self.cursor];
-            self.cursor += 1;
-            Ok(result)
+        let result_byte = 0;
+        match self.cursor.read_exact(&mut [result_byte]) {
+            Ok(_) => Ok(result_byte),
+            Err(_) => Err(Error::ReadByteFailed),
         }
-    }
-
-    fn get_single_byte_regs(&mut self) -> Result<(u8, u8)> {
-        let value = self.read_u8()?;
-        Ok((value & LOW_NIBBLE, value & HIGH_NIBBLE))
     }
 
     fn read_u16(&mut self) -> Result<u16> {
@@ -189,5 +182,10 @@ impl<'a> DexInstructionFormatReader<'a> {
 
     fn read_u32(&mut self) -> Result<u32> {
         Ok(((self.read_u16()? as u32) << 16) + self.read_u16()? as u32)
+    }
+
+    fn get_single_byte_regs(&mut self) -> Result<(u8, u8)> {
+        let value = self.read_u8()?;
+        Ok((value & LOW_NIBBLE, value & HIGH_NIBBLE))
     }
 }

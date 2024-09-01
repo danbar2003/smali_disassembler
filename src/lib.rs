@@ -1,24 +1,25 @@
-pub mod opcodes;
-mod reader;
-
-use dex::{Error, Result};
+mod opcodes;
+mod errors;
+mod bytecode_format;
 
 use opcodes::*;
-use reader::DexInstructionFormatReader;
+use bytecode_format::DexInstructionFormatReader;
 
-#[allow(dead_code)]
+#[derive(Debug)]
 pub struct DexInstruction {
-    inst: DexBytecode,
-    offset: usize,
+    pub inst: DexBytecode,
+    pub offset: usize,
 }
 
-pub struct SmaliDeocder<'a> {
-    reader: DexInstructionFormatReader<'a>,
+pub type Result<T> = std::result::Result<T, errors::Error>;
+
+pub struct SmaliDeocder<'a> { 
+    reader: DexInstructionFormatReader<'a>
 }
 
 #[allow(dead_code)]
 impl<'a> SmaliDeocder<'a> {
-    fn new(stream: &'a [u8]) -> Self {
+    pub fn new(stream: &'a [u8]) -> Self {
         Self {
             reader: DexInstructionFormatReader::new(stream),
         }
@@ -129,15 +130,15 @@ impl<'a> SmaliDeocder<'a> {
                 todo!();
             }
 
-            _ => Err(Error::MalFormed(String::from("invalid opcode"))),
+            _ => Err(errors::Error::InvalidOpcode),
         }?;
 
         Ok(DexInstruction { inst, offset })
     }
 
     /// decode all instruction
-    fn decode_all(&mut self) -> Vec<DexInstruction> {
-        // make sure we start from the top function
+    pub fn decode_all(&mut self) -> Vec<DexInstruction> {
+        // make sure we start from the first instruction
         self.reader.reset();
 
         // vector to hold instructions
@@ -152,5 +153,5 @@ impl<'a> SmaliDeocder<'a> {
     }
 }
 
-#[cfg(test)]
-mod tests {}
+// #[cfg(test)]
+// mod tests {}
