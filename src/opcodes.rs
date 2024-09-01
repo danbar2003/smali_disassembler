@@ -33,6 +33,11 @@ pub const CONST_CLASS_OP: u8 = 0x1c;
 pub const MONITOR_ENTER_OP: u8 = 0x1d;
 pub const MONITOR_EXIT_OP: u8 = 0x1e;
 pub const CHECK_CAST_OP: u8 = 0x1f;
+pub const INSTANCE_OF_OP: u8 = 0x20;
+pub const ARRAY_LENGTH_OP: u8 = 0x21;
+pub const NEW_INSTANCE_OP: u8 = 0x22;
+pub const NEW_ARRAY_OP: u8 = 0x23;
+pub const FILLED_NEW_ARRAY_OP: u8 = 0x24;
 
 #[derive(Debug)]
 pub enum DexBytecode {
@@ -59,6 +64,13 @@ pub enum DexBytecode {
 
     MonitorEnter(u8),
     MonitorExit(u8),
+
+    InstanceOf(u8, u8, u16),
+    ArrayLength(u8, u8),
+
+    NewInstance(u8, u16),
+    NewArray(u8, u8, u16),
+    FilledNewArray()
 }
 
 #[derive(Debug)]

@@ -1,23 +1,18 @@
 use crate::{errors::Error, Result};
 use std::io::{Cursor, Read};
 
+const LOW_NIBBLE: u8 = 0x0f;
+const HIGH_NIBBLE: u8 = 0xf0;
+
 pub struct DexInstructionFormatReader<'a> {
     cursor: Cursor<&'a [u8]>,
 }
 
-const LOW_NIBBLE: u8 = 0x0f;
-const HIGH_NIBBLE: u8 = 0xf0;
-
-#[allow(dead_code)]
 impl<'a> DexInstructionFormatReader<'a> {
     pub fn new(stream: &'a [u8]) -> Self {
         Self {
             cursor: Cursor::new(&stream),
         }
-    }
-
-    pub fn reset(&mut self) {
-        self.cursor.set_position(0);
     }
 
     pub fn read_byte(&mut self) -> Result<(u8, usize)> {
