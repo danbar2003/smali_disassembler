@@ -105,6 +105,126 @@ pub const STATIC_PUT_BOOLEAN_OP: u8 = 0x6a;
 pub const STATIC_PUT_BYTE_OP: u8 = 0x6b;
 pub const STATIC_PUT_CHAR_OP: u8 = 0x6c;
 pub const STATIC_PUT_SHORT_OP: u8 = 0x6d;
+pub const INVOKE_VIRTUAL_OP: u8 = 0x6e;
+pub const INVOKE_SUPER_OP: u8 = 0x6f;
+pub const INVOKE_DIRECT_OP: u8 = 0x70;
+pub const INVOKE_STATIC_OP: u8 = 0x71;
+pub const INVOKE_INTERFACE_OP: u8 = 0x72;
+pub const INVOKE_VIRTUAL_RANGE_OP: u8 = 0x74;
+pub const INVOKE_SUPER_RANGE_OP: u8 = 0x75;
+pub const INVOKE_DIRECT_RANGE_OP: u8 = 0x76;
+pub const INVOKE_STATIC_RANGE_OP: u8 = 0x77;
+pub const INVOKE_INTERFACE_RANGE_OP: u8 = 0x78;
+pub const NEG_INT_OP: u8 = 0x7b;
+pub const NOT_INT_OP: u8 = 0x7c;
+pub const NEG_LONG_OP: u8 = 0x7d;
+pub const NOT_LONG_OP: u8 = 0x7e;
+pub const NEG_FLOAT_OP: u8 = 0x7f;
+pub const NEG_DOUBLE_OP: u8 = 0x80;
+pub const INT_TO_LONG_OP: u8 = 0x81;
+pub const INT_TO_FLOAT_OP: u8 = 0x82;
+pub const INT_TO_DOUBLE_OP: u8 = 0x83;
+pub const LONG_TO_INT_OP: u8 = 0x84;
+pub const LONG_TO_FLOAT_OP: u8 = 0x85;
+pub const LONG_TO_DOUBLE_OP: u8 = 0x86;
+pub const FLOAT_TO_INT_OP: u8 = 0x87;
+pub const FLOAT_TO_LONG_OP: u8 = 0x88;
+pub const FLOAT_TO_DOUBLE_OP: u8 = 0x89;
+pub const DOUBLE_TO_INT_OP: u8 = 0x8a;
+pub const DOUBLE_TO_LONG_OP: u8 = 0x8b;
+pub const DOUBLE_TO_FLOAT_OP: u8 = 0x8c;
+pub const INT_TO_BYTE_OP: u8 = 0x8d;
+pub const INT_TO_CHAR_OP: u8 = 0x8e;
+pub const INT_TO_SHORT_OP: u8 = 0x8f;
+pub const ADD_INT_OP: u8 = 0x90;
+pub const SUB_INT_OP: u8 = 0x91;
+pub const MUL_INT_OP: u8 = 0x92;
+pub const DIV_INT_OP: u8 = 0x93;
+pub const REM_INT_OP: u8 = 0x94;
+pub const AND_INT_OP: u8 = 0x95;
+pub const OR_INT_OP: u8 = 0x96;
+pub const XOR_INT_OP: u8 = 0x97;
+pub const SHL_INT_OP: u8 = 0x98;
+pub const SHR_INT_OP: u8 = 0x99;
+pub const USHR_INT_OP: u8 = 0x9a;
+pub const ADD_LONG_OP: u8 = 0x9b;
+pub const SUB_LONG_OP: u8 = 0x9c;
+pub const MUL_LONG_OP: u8 = 0x9d;
+pub const DIV_LONG_OP: u8 = 0x9e;
+pub const REM_LONG_OP: u8 = 0x9f;
+pub const AND_LONG_OP: u8 = 0xa0;
+pub const OR_LONG_OP: u8 = 0xa1;
+pub const XOR_LONG_OP: u8 = 0xa2;
+pub const SHL_LONG_OP: u8 = 0xa3;
+pub const SHR_LONG_OP: u8 = 0xa4;
+pub const USHR_LONG_OP: u8 = 0xa5;
+pub const ADD_FLOAT_OP: u8 = 0xa6;
+pub const SUB_FLOAT_OP: u8 = 0xa7;
+pub const MUL_FLOAT_OP: u8 = 0xa8;
+pub const DIV_FLOAT_OP: u8 = 0xa9;
+pub const REM_FLOAT_OP: u8 = 0xaa;
+pub const ADD_DOUBLE_OP: u8 = 0xab;
+pub const SUB_DOUBLE_OP: u8 = 0xac;
+pub const MUL_DOUBLE_OP: u8 = 0xad;
+pub const DIV_DOUBLE_OP: u8 = 0xae;
+pub const REM_DOUBLE_OP: u8 = 0xaf;
+pub const ADD_INT_2ADDR_OP: u8 = 0xb0;
+pub const SUB_INT_2ADDR_OP: u8 = 0xb1;
+pub const MUL_INT_2ADDR_OP: u8 = 0xb2;
+pub const DIV_INT_2ADDR_OP: u8 = 0xb3;
+pub const REM_INT_2ADDR_OP: u8 = 0xb4;
+pub const AND_INT_2ADDR_OP: u8 = 0xb5;
+pub const OR_INT_2ADDR_OP: u8 = 0xb6;
+pub const XOR_INT_2ADDR_OP: u8 = 0xb7;
+pub const SHL_INT_2ADDR_OP: u8 = 0xb8;
+pub const SHR_INT_2ADDR_OP: u8 = 0xb9;
+pub const USHR_INT_2ADDR_OP: u8 = 0xba;
+pub const ADD_LONG_2ADDR_OP: u8 = 0xbb;
+pub const SUB_LONG_2ADDR_OP: u8 = 0xbc;
+pub const MUL_LONG_2ADDR_OP: u8 = 0xbd;
+pub const DIV_LONG_2ADDR_OP: u8 = 0xbe;
+pub const REM_LONG_2ADDR_OP: u8 = 0xbf;
+pub const AND_LONG_2ADDR_OP: u8 = 0xc0;
+pub const OR_LONG_2ADDR_OP: u8 = 0xc1;
+pub const XOR_LONG_2ADDR_OP: u8 = 0xc2;
+pub const SHL_LONG_2ADDR_OP: u8 = 0xc3;
+pub const SHR_LONG_2ADDR_OP: u8 = 0xc4;
+pub const USHR_LONG_2ADDR_OP: u8 = 0xc5;
+pub const ADD_FLOAT_2ADDR_OP: u8 = 0xc6;
+pub const SUB_FLOAT_2ADDR_OP: u8 = 0xc7;
+pub const MUL_FLOAT_2ADDR_OP: u8 = 0xc8;
+pub const DIV_FLOAT_2ADDR_OP: u8 = 0xc9;
+pub const REM_FLOAT_2ADDR_OP: u8 = 0xca;
+pub const ADD_DOUBLE_2ADDR_OP: u8 = 0xcb;
+pub const SUB_DOUBLE_2ADDR_OP: u8 = 0xcc;
+pub const MUL_DOUBLE_2ADDR_OP: u8 = 0xcd;
+pub const DIV_DOUBLE_2ADDR_OP: u8 = 0xce;
+pub const REM_DOUBLE_2ADDR_OP: u8 = 0xcf;
+pub const ADD_INT_LIT16_OP: u8 = 0xd0;
+pub const RSUB_INT_OP: u8 = 0xd1; // Reverse subtract
+pub const MUL_INT_LIT16_OP: u8 = 0xd2;
+pub const DIV_INT_LIT16_OP: u8 = 0xd3;
+pub const REM_INT_LIT16_OP: u8 = 0xd4;
+pub const AND_INT_LIT16_OP: u8 = 0xd5;
+pub const OR_INT_LIT16_OP: u8 = 0xd6;
+pub const XOR_INT_LIT16_OP: u8 = 0xd7;
+pub const ADD_INT_LIT8_OP: u8 = 0xd8;
+pub const RSUB_INT_LIT8_OP: u8 = 0xd9; // Reverse subtract with 8-bit literal
+pub const MUL_INT_LIT8_OP: u8 = 0xda;
+pub const DIV_INT_LIT8_OP: u8 = 0xdb;
+pub const REM_INT_LIT8_OP: u8 = 0xdc;
+pub const AND_INT_LIT8_OP: u8 = 0xdd;
+pub const OR_INT_LIT8_OP: u8 = 0xde;
+pub const XOR_INT_LIT8_OP: u8 = 0xdf;
+pub const SHL_INT_LIT8_OP: u8 = 0xe0;
+pub const SHR_INT_LIT8_OP: u8 = 0xe1;
+pub const USHR_INT_LIT8_OP: u8 = 0xe2;
+pub const INVOKE_POLYMORPHIC_OP: u8 = 0xfa;
+pub const INVOKE_POLYMORPHIC_RANGE_OP: u8 = 0xfb;
+pub const INVOKE_CUSTOM_OP: u8 = 0xfc;
+pub const INVOKE_CUSTOM_RANGE_OP: u8 = 0xfd;
+pub const CONST_METHOD_HANDLE_OP: u8 = 0xfe;
+pub const CONST_METHOD_TYPE_OP: u8 = 0xff;
 
 #[derive(Debug)]
 pub enum DalvikBytecode {
@@ -158,6 +278,9 @@ pub enum DalvikBytecode {
     ArrayOp(OpKind, u8, u8, u8),
     InstanceOp(OpKind, u8, u8, u16),
     StaticOp(OpKind, u8, u16),
+
+    Invoke(InvokeKind, Vec<u8>, u16),
+    InvokeRange(InvokeKind, u8, u16, u16),
 }
 
 #[derive(Debug)]
@@ -287,6 +410,28 @@ impl OpKind {
             ARRAY_PUT_BYTE_OP | INSTANCE_PUT_BYTE_OP | STATIC_PUT_BYTE_OP => Self::PutByte,
             ARRAY_PUT_CHAR_OP | INSTANCE_PUT_CHAR_OP | STATIC_PUT_CHAR_OP => Self::PutChar,
             ARRAY_PUT_SHORT_OP | INSTANCE_PUT_SHORT_OP | STATIC_PUT_SHORT_OP => Self::PutShort,
+            _ => unreachable!(),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum InvokeKind {
+    Virtual,
+    Super,
+    Direct,
+    Static,
+    Interface,
+}
+
+impl InvokeKind {
+    pub fn from_opcode(op: u8) -> Self {
+        match op {
+            INVOKE_VIRTUAL_OP | INVOKE_VIRTUAL_RANGE_OP => Self::Virtual,
+            INVOKE_SUPER_OP | INVOKE_SUPER_RANGE_OP => Self::Super,
+            INVOKE_DIRECT_OP | INVOKE_DIRECT_RANGE_OP => Self::Direct,
+            INVOKE_STATIC_OP | INVOKE_STATIC_RANGE_OP => Self::Static,
+            INVOKE_INTERFACE_OP | INVOKE_INTERFACE_RANGE_OP => Self::Interface,
             _ => unreachable!(),
         }
     }

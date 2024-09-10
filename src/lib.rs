@@ -250,6 +250,25 @@ impl DalvikInstruction {
                 ))
             }
 
+            op @ INVOKE_VIRTUAL_OP..=INVOKE_INTERFACE_OP => {
+                let (regs, meth_id) = reader.r_35c()?;
+                Ok(DalvikBytecode::Invoke(
+                    InvokeKind::from_opcode(op),
+                    regs,
+                    meth_id,
+                ))
+            }
+
+            op @ INVOKE_VIRTUAL_RANGE_OP..=INVOKE_INTERFACE_RANGE_OP => {
+                let (reg, reg_count, meth_id) = reader.r_3rc()?;
+                Ok(DalvikBytecode::InvokeRange(
+                    InvokeKind::from_opcode(op),
+                    reg,
+                    reg_count,
+                    meth_id,
+                ))
+            }
+
             _ => Err(errors::Error::InvalidOpcode),
         };
         let inst = dalvik_bytecode?;
