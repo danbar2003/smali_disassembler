@@ -56,12 +56,11 @@ impl<'a> DexInstructionFormatReader<'a> {
     }
 
     pub fn r_21h(&mut self) -> Result<(u8, i16)> {
-        todo!();
+        self.r_21t()
     }
 
     pub fn r_21c(&mut self) -> Result<(u8, u16)> {
-        todo!();
-        // self.r_22x()
+        self.r_22x()
     }
 
     pub fn r_23x(&mut self) -> Result<(u8, u8, u8)> {
@@ -166,7 +165,7 @@ impl<'a> DexInstructionFormatReader<'a> {
     }
 
     pub fn r_51(&mut self) -> Result<(u8, u64)> {
-        todo!()
+        Ok((self.read_u8()?, self.read_u64()?))
     }
 
     fn read_u8(&mut self) -> Result<u8> {
@@ -195,6 +194,10 @@ impl<'a> DexInstructionFormatReader<'a> {
 
     fn read_i32(&mut self) -> Result<i32> {
         Ok(self.read_u32()? as i32)
+    }
+
+    fn read_u64(&mut self) -> Result<u64> {
+        Ok(((self.read_u32()? as u64) << (mem::size_of::<u64>() * 4)) + self.read_u32()? as u64)
     }
 
     fn get_single_byte_regs(&mut self) -> Result<(u8, u8)> {

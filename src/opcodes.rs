@@ -281,6 +281,15 @@ pub enum DalvikBytecode {
 
     Invoke(InvokeKind, Vec<u8>, u16),
     InvokeRange(InvokeKind, u8, u16, u16),
+
+    Unop(UnopKind, u8, u8),
+    Binop(ArithmeticKind, u8, u8, u8),
+    Binop2Addr(ArithmeticKind, u8, u8),
+    BinopLit16(ArithmeticKind, u8, u8, i16),
+    BinopLit8(ArithmeticKind, u8, u8, i8),
+
+    InvokePolymorphic(Vec<u8>, u16, u16),
+    InvokePolymorphicRange(u8, u16, u16, u16),
 }
 
 #[derive(Debug)]
@@ -432,6 +441,138 @@ impl InvokeKind {
             INVOKE_DIRECT_OP | INVOKE_DIRECT_RANGE_OP => Self::Direct,
             INVOKE_STATIC_OP | INVOKE_STATIC_RANGE_OP => Self::Static,
             INVOKE_INTERFACE_OP | INVOKE_INTERFACE_RANGE_OP => Self::Interface,
+            _ => unreachable!(),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum UnopKind {
+    NegInt,
+    NotInt,
+    NegLong,
+    NotLong,
+    NegFloat,
+    NegDouble,
+    IntToLong,
+    IntToFloat,
+    IntToDouble,
+    LongToInt,
+    LongToFloat,
+    LongToDouble,
+    FloatToInt,
+    FloatToLong,
+    FloatToDouble,
+    DoubleToInt,
+    DoubleToLong,
+    DoubleToFloat,
+    IntToByte,
+    IntToChar,
+    IntToShort,
+}
+
+impl UnopKind {
+    pub fn from_opcode(op: u8) -> Self {
+        match op {
+            NEG_INT_OP => Self::NegInt,
+            NOT_INT_OP => Self::NotInt,
+            NEG_LONG_OP => Self::NegLong,
+            NOT_LONG_OP => Self::NotLong,
+            NEG_FLOAT_OP => Self::NegFloat,
+            NEG_DOUBLE_OP => Self::NegDouble,
+            INT_TO_LONG_OP => Self::IntToLong,
+            INT_TO_FLOAT_OP => Self::IntToFloat,
+            INT_TO_DOUBLE_OP => Self::IntToDouble,
+            LONG_TO_INT_OP => Self::LongToInt,
+            LONG_TO_FLOAT_OP => Self::LongToFloat,
+            LONG_TO_DOUBLE_OP => Self::LongToDouble,
+            FLOAT_TO_INT_OP => Self::FloatToInt,
+            FLOAT_TO_LONG_OP => Self::FloatToLong,
+            FLOAT_TO_DOUBLE_OP => Self::FloatToDouble,
+            DOUBLE_TO_INT_OP => Self::DoubleToInt,
+            DOUBLE_TO_LONG_OP => Self::DoubleToLong,
+            DOUBLE_TO_FLOAT_OP => Self::DoubleToFloat,
+            INT_TO_BYTE_OP => Self::IntToByte,
+            INT_TO_CHAR_OP => Self::IntToChar,
+            INT_TO_SHORT_OP => Self::IntToShort,
+            _ => unreachable!(),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum ArithmeticKind {
+    AddInt,
+    SubInt,
+    MulInt,
+    DivInt,
+    RemInt,
+    AndInt,
+    OrInt,
+    XorInt,
+    ShlInt,
+    ShrInt,
+    UshrInt,
+    AddLong,
+    SubLong,
+    MulLong,
+    DivLong,
+    RemLong,
+    AndLong,
+    OrLong,
+    XorLong,
+    ShlLong,
+    ShrLong,
+    UshrLong,
+    AddFloat,
+    SubFloat,
+    MulFloat,
+    DivFloat,
+    RemFloat,
+    AddDouble,
+    SubDouble,
+    MulDouble,
+    DivDouble,
+    RemDouble,
+    RSubInt,
+}
+
+impl ArithmeticKind {
+    pub fn from_opcode(op: u8) -> Self {
+        match op {
+            ADD_INT_OP | ADD_INT_2ADDR_OP | ADD_INT_LIT16_OP | ADD_INT_LIT8_OP => Self::AddInt,
+            SUB_INT_OP | SUB_INT_2ADDR_OP => Self::SubInt,
+            MUL_INT_OP | MUL_INT_2ADDR_OP | MUL_INT_LIT16_OP | MUL_INT_LIT8_OP => Self::MulInt,
+            DIV_INT_OP | DIV_INT_2ADDR_OP | DIV_INT_LIT16_OP | DIV_INT_LIT8_OP => Self::DivInt,
+            REM_INT_OP | REM_INT_2ADDR_OP | REM_INT_LIT16_OP | REM_INT_LIT8_OP => Self::RemInt,
+            AND_INT_OP | AND_INT_2ADDR_OP | AND_INT_LIT16_OP | AND_INT_LIT8_OP => Self::AndInt,
+            OR_INT_OP | OR_INT_2ADDR_OP | OR_INT_LIT16_OP | OR_INT_LIT8_OP => Self::OrInt,
+            XOR_INT_OP | XOR_INT_2ADDR_OP | XOR_INT_LIT16_OP | XOR_INT_LIT8_OP => Self::XorInt,
+            SHL_INT_OP | SHL_INT_2ADDR_OP | SHL_INT_LIT8_OP => Self::ShlInt,
+            SHR_INT_OP | SHR_INT_2ADDR_OP | SHR_INT_LIT8_OP => Self::ShrInt,
+            USHR_INT_OP | USHR_INT_2ADDR_OP | USHR_INT_LIT8_OP => Self::UshrInt,
+            ADD_LONG_OP | ADD_LONG_2ADDR_OP => Self::AddLong,
+            SUB_LONG_OP | SUB_LONG_2ADDR_OP => Self::SubLong,
+            MUL_LONG_OP | MUL_LONG_2ADDR_OP => Self::MulLong,
+            DIV_LONG_OP | DIV_LONG_2ADDR_OP => Self::DivLong,
+            REM_LONG_OP | REM_LONG_2ADDR_OP => Self::RemLong,
+            AND_LONG_OP | AND_LONG_2ADDR_OP => Self::AndLong,
+            OR_LONG_OP | OR_LONG_2ADDR_OP => Self::OrLong,
+            XOR_LONG_OP | XOR_LONG_2ADDR_OP => Self::XorLong,
+            SHL_LONG_OP | SHL_LONG_2ADDR_OP => Self::ShlLong,
+            SHR_LONG_OP | SHR_LONG_2ADDR_OP => Self::ShrLong,
+            USHR_LONG_OP | USHR_LONG_2ADDR_OP => Self::UshrLong,
+            ADD_FLOAT_OP | ADD_FLOAT_2ADDR_OP => Self::AddFloat,
+            SUB_FLOAT_OP | SUB_FLOAT_2ADDR_OP => Self::SubFloat,
+            MUL_FLOAT_OP | MUL_FLOAT_2ADDR_OP => Self::MulFloat,
+            DIV_FLOAT_OP | DIV_FLOAT_2ADDR_OP => Self::DivFloat,
+            REM_FLOAT_OP | REM_FLOAT_2ADDR_OP => Self::RemFloat,
+            ADD_DOUBLE_OP | ADD_DOUBLE_2ADDR_OP => Self::AddDouble,
+            SUB_DOUBLE_OP | SUB_DOUBLE_2ADDR_OP => Self::SubDouble,
+            MUL_DOUBLE_OP | MUL_DOUBLE_2ADDR_OP => Self::MulDouble,
+            DIV_DOUBLE_OP | DIV_DOUBLE_2ADDR_OP => Self::DivDouble,
+            REM_DOUBLE_OP | REM_DOUBLE_2ADDR_OP => Self::RemDouble,
+            RSUB_INT_OP | RSUB_INT_LIT8_OP => Self::RSubInt,
             _ => unreachable!(),
         }
     }

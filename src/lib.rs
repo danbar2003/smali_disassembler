@@ -119,8 +119,8 @@ impl DalvikInstruction {
             }
 
             CHECK_CAST_OP => {
-                let (_reg, _type_index): (u8, u16) = reader.r_21c()?;
-                todo!();
+                let (reg, type_index): (u8, u16) = reader.r_21c()?;
+                Ok(DalvikBytecode::ConstClass(reg, type_index))
             }
 
             INSTANCE_OF_OP => {
@@ -269,6 +269,77 @@ impl DalvikInstruction {
                 ))
             }
 
+            op @ NEG_INT_OP..=INT_TO_SHORT_OP => {
+                let (dst, src) = reader.r_12x()?;
+                Ok(DalvikBytecode::Unop(UnopKind::from_opcode(op), dst, src))
+            }
+
+            op @ ADD_INT_OP..=REM_DOUBLE_OP => {
+                let (dst, src1, src2) = reader.r_23x()?;
+                Ok(DalvikBytecode::Binop(
+                    ArithmeticKind::from_opcode(op),
+                    dst,
+                    src1,
+                    src2,
+                ))
+            }
+
+            op @ ADD_INT_2ADDR_OP..=REM_DOUBLE_2ADDR_OP => {
+                let (dst, src) = reader.r_12x()?;
+                Ok(DalvikBytecode::Binop2Addr(
+                    ArithmeticKind::from_opcode(op),
+                    dst,
+                    src,
+                ))
+            }
+
+            op @ ADD_INT_LIT16_OP..=XOR_INT_LIT16_OP => {
+                let (dst, src, value) = reader.r_22s()?;
+                Ok(DalvikBytecode::BinopLit16(
+                    ArithmeticKind::from_opcode(op),
+                    dst,
+                    src,
+                    value,
+                ))
+            }
+
+            op @ ADD_INT_LIT8_OP..=USHR_INT_LIT8_OP => {
+                let (dst, src, value) = reader.r_22b()?;
+                Ok(DalvikBytecode::BinopLit8(
+                    ArithmeticKind::from_opcode(op),
+                    dst,
+                    src,
+                    value,
+                ))
+            }
+
+            INVOKE_POLYMORPHIC_OP => {
+                let (regs, meth_id, proto_id) = reader.r_45cc()?;
+                Ok(DalvikBytecode::InvokePolymorphic(regs, meth_id, proto_id))
+            }
+
+            INVOKE_POLYMORPHIC_RANGE_OP => {
+                let (reg, meth_id, dst_regs, proto_id) = reader.r_4rcc()?;
+                Ok(DalvikBytecode::InvokePolymorphicRange(
+                    reg, meth_id, dst_regs, proto_id,
+                ))
+            }
+
+            INVOKE_CUSTOM_OP => {
+                todo!()
+            }
+
+            INVOKE_CUSTOM_RANGE_OP => {
+                todo!()
+            }
+
+            CONST_METHOD_HANDLE_OP => {
+                todo!()
+            }
+            CONST_METHOD_TYPE_OP => {
+                todo!()
+            }
+
             _ => Err(errors::Error::InvalidOpcode),
         };
         let inst = dalvik_bytecode?;
@@ -293,7 +364,10 @@ impl<'a> SmaliDecoder<'a> {
         // vector to hold instructions
         let mut instructions = vec![];
 
+        // new reader so we start at the beginning
         let mut new_reader = DexInstructionFormatReader::new(&self.stream);
+
+        // loop until finishing decoding all instructions
         while let Ok(inst) = DalvikInstruction::decode_instruction(&mut new_reader) {
             instructions.push(inst)
         }
