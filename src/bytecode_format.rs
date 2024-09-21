@@ -169,11 +169,13 @@ impl<'a> DexInstructionFormatReader<'a> {
     }
 
     fn read_u8(&mut self) -> Result<u8> {
-        let result_byte = 0;
-        match self.cursor.read_exact(&mut [result_byte]) {
-            Ok(_) => Ok(result_byte),
+        let mut out = [0u8; 1];
+        let please = match self.cursor.read_exact(&mut out) {
+            Ok(_) => Ok(u8::from_le_bytes(out)),
             Err(_) => Err(Error::ReadByteFailed),
-        }
+        };
+
+        please
     }
 
     fn read_i8(&mut self) -> Result<i8> {
@@ -202,6 +204,6 @@ impl<'a> DexInstructionFormatReader<'a> {
 
     fn get_single_byte_regs(&mut self) -> Result<(u8, u8)> {
         let value = self.read_u8()?;
-        Ok((value & LOW_NIBBLE, value & HIGH_NIBBLE))
+        Ok((value & LOW_NIBBLE, (value & HIGH_NIBBLE) >> mem::size_of::<u8>() * 4))
     }
 }

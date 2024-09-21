@@ -6,7 +6,33 @@ use bytecode_format::DexInstructionFormatReader;
 use opcodes::*;
 
 pub type Result<T> = std::result::Result<T, errors::Error>;
+pub struct SmaliDecoder<'a> {
+    stream: &'a [u8],
+}
 
+impl<'a> SmaliDecoder<'a> {
+    pub fn new(stream: &'a [u8]) -> Self {
+        Self { stream }
+    }
+
+    /// decode all instruction
+    pub fn decode_all(&self) -> Vec<DalvikInstruction> {
+        // vector to hold instructions
+        let mut instructions = vec![];
+
+        // new reader so we start at the beginning
+        let mut new_reader = DexInstructionFormatReader::new(&self.stream);
+
+        // loop until finishing decoding all instructions
+        while let Ok(inst) = DalvikInstruction::decode_instruction(&mut new_reader) {
+            println!("{:#?}", inst);
+            instructions.push(inst)
+        }
+
+        // decode all instructions
+        instructions
+    }
+}
 #[derive(Debug)]
 pub struct DalvikInstruction {
     pub inst: DalvikBytecode,
@@ -19,6 +45,7 @@ impl DalvikInstruction {
     fn decode_instruction<'a>(reader: &'a mut DexInstructionFormatReader) -> Result<Self> {
         let (opcode, offset) = reader.read_byte()?;
 
+        println!("PLEASE WORK {} {}", opcode, offset);
         let dalvik_bytecode = match opcode {
             NOP_OP => Ok(DalvikBytecode::Nop),
 
@@ -149,9 +176,9 @@ impl DalvikInstruction {
             }
 
             FILLED_NEW_ARRAY_RANGE_OP => {
-                let (reg, type_index, first_argument_reg) = reader.r_3rc()?;
+                let (regs_count, type_index, first_argument_reg) = reader.r_3rc()?;
                 Ok(DalvikBytecode::FilledNewArrayRange(
-                    reg,
+                    regs_count,
                     type_index,
                     first_argument_reg,
                 ))
@@ -326,18 +353,27 @@ impl DalvikInstruction {
             }
 
             INVOKE_CUSTOM_OP => {
-                todo!()
+                let (regs, call_site) = reader.r_35c()?;
+                Ok(DalvikBytecode::InvokeCustom(regs, call_site))
             }
 
             INVOKE_CUSTOM_RANGE_OP => {
-                todo!()
+                let (regs_count, call_site, first_argument_reg) = reader.r_3rc()?;
+                Ok(DalvikBytecode::InvokeCustomRange(
+                    regs_count,
+                    call_site,
+                    first_argument_reg,
+                ))
             }
 
             CONST_METHOD_HANDLE_OP => {
-                todo!()
+                let (dst, meth_id) = reader.r_21c()?;
+                Ok(DalvikBytecode::ConstMethodHandle(dst, meth_id))
             }
+
             CONST_METHOD_TYPE_OP => {
-                todo!()
+                let (dst, type_index) = reader.r_21c()?;
+                Ok(DalvikBytecode::ConstMethodType(dst, type_index))
             }
 
             _ => Err(errors::Error::InvalidOpcode),
@@ -348,31 +384,3 @@ impl DalvikInstruction {
     }
 }
 // move this to another module?
-
-pub struct SmaliDecoder<'a> {
-    stream: &'a [u8],
-}
-
-#[allow(dead_code)]
-impl<'a> SmaliDecoder<'a> {
-    pub fn new(stream: &'a [u8]) -> Self {
-        Self { stream }
-    }
-
-    /// decode all instruction
-    pub fn decode_all(&self) -> Vec<DalvikInstruction> {
-        // vector to hold instructions
-        let mut instructions = vec![];
-
-        // new reader so we start at the beginning
-        let mut new_reader = DexInstructionFormatReader::new(&self.stream);
-
-        // loop until finishing decoding all instructions
-        while let Ok(inst) = DalvikInstruction::decode_instruction(&mut new_reader) {
-            instructions.push(inst)
-        }
-
-        // decode all instructions
-        instructions
-    }
-}

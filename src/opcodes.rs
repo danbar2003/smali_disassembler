@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 /// all dalvik opcodes
 pub const NOP_OP: u8 = 0x0;
 pub const MOV_OP: u8 = 0x1;
@@ -287,9 +285,13 @@ pub enum DalvikBytecode {
     Binop2Addr(ArithmeticKind, u8, u8),
     BinopLit16(ArithmeticKind, u8, u8, i16),
     BinopLit8(ArithmeticKind, u8, u8, i8),
-
+    
     InvokePolymorphic(Vec<u8>, u16, u16),
     InvokePolymorphicRange(u8, u16, u16, u16),
+    InvokeCustom(Vec<u8>, u16),
+    InvokeCustomRange(u8, u16, u16),
+    ConstMethodHandle(u8, u16), 
+    ConstMethodType(u8, u16), 
 }
 
 #[derive(Debug)]
