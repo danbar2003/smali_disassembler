@@ -27,7 +27,6 @@ fn test_wow() -> Result<(), Box<dyn std::error::Error>> {
                 let please = decoder.decode_all();
                 return Ok(());
             }
-
         }
     }
 

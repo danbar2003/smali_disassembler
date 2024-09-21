@@ -24,10 +24,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .flat_map(|num| num.to_ne_bytes())
                     .collect();
                 let decoder = SmaliDecoder::new(&code);
-                let should_show = class_name == "LA2/a;" && method.name().to_string() == "f";
-                let please = decoder.decode_all(should_show);
+                let _please = decoder.decode_all();
             }
-
         }
     }
     Ok(())

@@ -37,13 +37,10 @@ pub const NEW_INSTANCE_OP: u8 = 0x22;
 pub const NEW_ARRAY_OP: u8 = 0x23;
 pub const FILLED_NEW_ARRAY_OP: u8 = 0x24;
 pub const FILLED_NEW_ARRAY_RANGE_OP: u8 = 0x25;
-pub const FILL_ARRAY_DATA_OP: u8 = 0x26;
 pub const THROW_OP: u8 = 0x27;
 pub const GOTO_OP: u8 = 0x28;
 pub const GOTO16_OP: u8 = 0x29;
 pub const GOTO32_OP: u8 = 0x2a;
-pub const PACKED_SWITCH_OP: u8 = 0x2b;
-pub const SPARSE_SWITCH_OP: u8 = 0x2c;
 pub const CMPL_FLOAT_OP: u8 = 0x2d;
 pub const CMPG_FLOAT_OP: u8 = 0x2e;
 pub const CMPL_DOUBLE_OP: u8 = 0x2f;
@@ -224,6 +221,10 @@ pub const INVOKE_CUSTOM_RANGE_OP: u8 = 0xfd;
 pub const CONST_METHOD_HANDLE_OP: u8 = 0xfe;
 pub const CONST_METHOD_TYPE_OP: u8 = 0xff;
 
+pub const PSEUDO_PACKED_SWITCH_OP: u8 = 0x1;
+pub const PSEUDO_SPARSE_SWITCH_OP: u8 = 0x2;
+pub const PSEUDO_FILL_ARRAY_DATA_OP: u8 = 0x3;
+
 #[derive(Debug)]
 pub enum DalvikBytecode {
     Nop,
@@ -285,13 +286,13 @@ pub enum DalvikBytecode {
     Binop2Addr(ArithmeticKind, u8, u8),
     BinopLit16(ArithmeticKind, u8, u8, i16),
     BinopLit8(ArithmeticKind, u8, u8, i8),
-    
+
     InvokePolymorphic(Vec<u8>, u16, u16),
     InvokePolymorphicRange(u8, u16, u16, u16),
     InvokeCustom(Vec<u8>, u16),
     InvokeCustomRange(u8, u16, u16),
-    ConstMethodHandle(u8, u16), 
-    ConstMethodType(u8, u16), 
+    ConstMethodHandle(u8, u16),
+    ConstMethodType(u8, u16),
 }
 
 #[derive(Debug)]

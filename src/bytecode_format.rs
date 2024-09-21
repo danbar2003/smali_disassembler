@@ -1,5 +1,8 @@
 use crate::{errors::Error, Result};
-use std::{io::{Cursor, Read}, mem};
+use std::{
+    io::{Cursor, Read},
+    mem,
+};
 
 const LOW_NIBBLE: u8 = 0x0f;
 const HIGH_NIBBLE: u8 = 0xf0;
@@ -208,6 +211,9 @@ impl<'a> DexInstructionFormatReader<'a> {
 
     fn get_single_byte_regs(&mut self) -> Result<(u8, u8)> {
         let value = self.read_u8()?;
-        Ok((value & LOW_NIBBLE, (value & HIGH_NIBBLE) >> mem::size_of::<u8>() * 4))
+        Ok((
+            value & LOW_NIBBLE,
+            (value & HIGH_NIBBLE) >> mem::size_of::<u8>() * 4,
+        ))
     }
 }

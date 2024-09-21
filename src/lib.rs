@@ -16,7 +16,7 @@ impl<'a> SmaliDecoder<'a> {
     }
 
     /// decode all instruction
-    pub fn decode_all(&self, a: bool) -> Vec<DalvikInstruction> {
+    pub fn decode_all(&self) -> Vec<DalvikInstruction> {
         // vector to hold instructions
         let mut instructions = vec![];
 
@@ -25,9 +25,6 @@ impl<'a> SmaliDecoder<'a> {
 
         // loop until finishing decoding all instructions
         while let Ok(inst) = DalvikInstruction::decode_instruction(&mut new_reader) {
-            if a {
-                println!("{:x?}", inst);
-            }
             instructions.push(inst)
         }
 
@@ -49,8 +46,28 @@ impl DalvikInstruction {
 
         let dalvik_bytecode = match opcode {
             NOP_OP => {
-                let _ = reader.r_10x()?;
-                Ok(DalvikBytecode::Nop)
+                let pseudo_opcode = reader.r_10x()?;
+
+                match pseudo_opcode {
+                    PSEUDO_PACKED_SWITCH_OP => {
+                        let (reg, value) = reader.r_31t()?;
+                        Ok(DalvikBytecode::PackedSwitch(reg, value))
+                    }
+
+                    PSEUDO_SPARSE_SWITCH_OP => {
+                        let (reg, value) = reader.r_31t()?;
+                        Ok(DalvikBytecode::SparseSwitch(reg, value))
+                    }
+
+                    PSEUDO_FILL_ARRAY_DATA_OP => {
+                        let (reg, value) = reader.r_31t()?;
+                        Ok(DalvikBytecode::FilledArrayData(reg, value))
+                    }
+
+                    NOP_OP => Ok(DalvikBytecode::Nop),
+
+                    _ => unreachable!(),
+                }
             }
 
             op @ (MOV_OP | MOV_WIDE_OP | MOV_OBJECT_OP) => {
@@ -78,8 +95,8 @@ impl DalvikInstruction {
             }
 
             RETURN_VOID_OP => {
-                let dst_reg = reader.r_10x()?;
-                Ok(DalvikBytecode::Return(ReturnKind::ReturnVoid, dst_reg))
+                let _ = reader.r_10x()?;
+                Ok(DalvikBytecode::Return(ReturnKind::ReturnVoid, 0))
             }
 
             op @ (RETURN_OP | RETURN_WIDE_OP | RETURN_OBJECT_OP) => {
@@ -191,11 +208,6 @@ impl DalvikInstruction {
                 ))
             }
 
-            FILL_ARRAY_DATA_OP => {
-                let (reg, value) = reader.r_31t()?;
-                Ok(DalvikBytecode::FilledArrayData(reg, value))
-            }
-
             THROW_OP => {
                 let reg = reader.r_11x()?;
                 Ok(DalvikBytecode::Throw(reg))
@@ -214,16 +226,6 @@ impl DalvikInstruction {
             GOTO32_OP => {
                 let reg = reader.r_30t()?;
                 Ok(DalvikBytecode::Goto32(reg))
-            }
-
-            PACKED_SWITCH_OP => {
-                let (reg, value) = reader.r_31t()?;
-                Ok(DalvikBytecode::PackedSwitch(reg, value))
-            }
-
-            SPARSE_SWITCH_OP => {
-                let (reg, value) = reader.r_31t()?;
-                Ok(DalvikBytecode::SparseSwitch(reg, value))
             }
 
             op @ CMPL_FLOAT_OP..=CMP_LONG_OP => {
