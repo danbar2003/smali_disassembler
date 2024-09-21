@@ -1,6 +1,6 @@
 [package]
 name = "smali_disassembler"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Daniel Bartov <daniel.bartov@gmail.com>"]
 description = "smali disassembler written fully in Rust"
