@@ -3,7 +3,7 @@ use std::{fs::File, io::Read};
 use zip::ZipArchive;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let zip_file = File::open("tests/duolingo.apk")?;
+    let zip_file = File::open("tmp/test.apk")?;
     let mut file_data = vec![];
     let mut archive = ZipArchive::new(zip_file)?;
 
