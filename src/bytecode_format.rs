@@ -21,6 +21,10 @@ impl<'a> DexInstructionFormatReader<'a> {
         Ok((value, position as usize))
     }
 
+    pub fn r_10x(&mut self) -> Result<u8> {
+        self.read_u8()
+    }
+
     pub fn r_12x(&mut self) -> Result<(u8, u8)> {
         self.get_single_byte_regs()
     }

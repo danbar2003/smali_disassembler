@@ -16,7 +16,7 @@ impl<'a> SmaliDecoder<'a> {
     }
 
     /// decode all instruction
-    pub fn decode_all(&self) -> Vec<DalvikInstruction> {
+    pub fn decode_all(&self, a: bool) -> Vec<DalvikInstruction> {
         // vector to hold instructions
         let mut instructions = vec![];
 
@@ -25,7 +25,9 @@ impl<'a> SmaliDecoder<'a> {
 
         // loop until finishing decoding all instructions
         while let Ok(inst) = DalvikInstruction::decode_instruction(&mut new_reader) {
-            println!("{:#?}", inst);
+            if a {
+                println!("{:x?}", inst);
+            }
             instructions.push(inst)
         }
 
@@ -45,9 +47,11 @@ impl DalvikInstruction {
     fn decode_instruction<'a>(reader: &'a mut DexInstructionFormatReader) -> Result<Self> {
         let (opcode, offset) = reader.read_byte()?;
 
-        println!("PLEASE WORK {} {}", opcode, offset);
         let dalvik_bytecode = match opcode {
-            NOP_OP => Ok(DalvikBytecode::Nop),
+            NOP_OP => {
+                let _ = reader.r_10x()?;
+                Ok(DalvikBytecode::Nop)
+            }
 
             op @ (MOV_OP | MOV_WIDE_OP | MOV_OBJECT_OP) => {
                 let (dst, src) = reader.r_12x()?;
@@ -73,7 +77,10 @@ impl DalvikInstruction {
                 Ok(DalvikBytecode::MoveResult(MoveKind::from_opcode(op), reg))
             }
 
-            RETURN_VOID_OP => Ok(DalvikBytecode::Return(ReturnKind::ReturnVoid, 0)),
+            RETURN_VOID_OP => {
+                let dst_reg = reader.r_10x()?;
+                Ok(DalvikBytecode::Return(ReturnKind::ReturnVoid, dst_reg))
+            }
 
             op @ (RETURN_OP | RETURN_WIDE_OP | RETURN_OBJECT_OP) => {
                 let reg = reader.r_11x()?;
