@@ -8,11 +8,6 @@ license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
-zip = "2.2.0"
-dex = "0.5.0"
-clap = { version = "4.5.18", features = ["derive"] }
-
 [dev-dependencies] 
 zip = "2.2.0"
 dex = "0.5.0"
