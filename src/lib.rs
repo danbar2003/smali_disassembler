@@ -5,6 +5,10 @@ use dalvik::bytecode_format::DexInstructionFormatReader;
 use dalvik::DalvikInstruction;
 
 pub type Result<T> = std::result::Result<T, errors::Error>;
+
+/// this is the main struct of this library
+/// you create it with raw stream of bytes and then
+/// decode_all to get a list of the parsed disassembly code
 pub struct SmaliDecoder<'a> {
     stream: &'a [u8],
 }
