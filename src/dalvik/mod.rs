@@ -365,4 +365,8 @@ impl DalvikInstruction {
 
         Ok(DalvikInstruction { inst, offset })
     }
+
+    pub fn is_basic_block_terminator(&self) -> bool {
+        self.inst.is_basic_block_terminator()
+    }
 }

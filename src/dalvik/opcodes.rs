@@ -295,6 +295,19 @@ pub enum DalvikBytecode {
     ConstMethodType(u8, u16),
 }
 
+impl DalvikBytecode {
+    pub fn is_basic_block_terminator(&self) -> bool {
+        match self {
+            Self::Return(_, _) => true,
+            Self::Goto(_) => true,
+            Self::Goto16(_) => true,
+            Self::Goto32(_) => true,
+            Self::Throw(_) => true,
+            _ => false,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum MoveKind {
     Move,
